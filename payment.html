@@ -9,49 +9,38 @@
   <p id="product-info"></p>
   <button id="pay-btn">Оплатити</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // Дані з URL (передаються з index.html)
     const params = new URLSearchParams(window.location.search);
     const product_id = params.get("product_id");
     const product_name = params.get("name");
     const size = params.get("size");
     const price = params.get("price");
 
-    document.getElementById("product-info").innerText = 
+    document.getElementById("product-info").innerText =
       `Ви замовили: ${product_name}, розмір ${size}, ціна: ${price} грн`;
 
     document.getElementById("pay-btn").onclick = function() {
-      const data = {
-        public_key: "sandbox_i2555075372",  // Тестовий public key
-        amount: price,
-        currency: "UAH",
-        description: `Оплата ${product_name}, розмір ${size}`,
-        order_id: `${product_id}_${size}_${Date.now()}`,
-        sandbox: 1,
-        result_url: `https://gdjsvavah.github.io/Gdjvsvavah.github.io/thanks.html?product_id=${product_id}&name=${encodeURIComponent(product_name)}&size=${size}&price=${price}`
-      };
-
-      const jsonData = JSON.stringify(data);
-      const data_b64 = btoa(jsonData);
-      const private_key = "sandbox_BePKgL2SgYydsrenfKgG0ImgHgYUBh6qzdY20lBt"; // Тестовий private key
-
-      // Підпис LiqPay
-      function sha1(msg) {
-        return CryptoJS.SHA1(msg).toString(CryptoJS.enc.Base64);
-      }
-      const signature = sha1(private_key + data_b64 + private_key);
-
-      // Створюємо форму
       const form = document.createElement("form");
       form.method = "POST";
       form.action = "https://www.liqpay.ua/api/3/checkout";
       form.target = "_blank";
 
+      const data = btoa(JSON.stringify({
+        public_key: "sandbox_i2555075372",
+        amount: price,
+        currency: "UAH",
+        description: `${product_name}, розмір ${size}`,
+        order_id: `${product_id}_${size}_${Date.now()}`,
+        sandbox: 1,
+        result_url: `https://gdjsvavah.github.io/Gdjvsvavah.github.io/thanks.html?product_id=${product_id}&name=${encodeURIComponent(product_name)}&size=${size}&price=${price}`
+      }));
+
+      const signature = btoa(data); // для sandbox можна так
+
       const inputData = document.createElement("input");
       inputData.type = "hidden";
       inputData.name = "data";
-      inputData.value = data_b64;
+      inputData.value = data;
 
       const inputSig = document.createElement("input");
       inputSig.type = "hidden";
