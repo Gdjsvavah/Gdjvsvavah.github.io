@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<title>Каталог взуття</title>
+  <meta charset="UTF-8">
+  <title>Каталог взуття</title>
 </head>
 <body>
-<h1>Каталог взуття</h1>
+  <h1>Каталог взуття</h1>
+  <div id="products"></div>
 
-<div id="products"></div>
+  <script>
+    const products = [
+      {id: 1, name: "Кросівки 1", price: 55},
+      {id: 2, name: "Кросівки 2", price: 60},
+      {id: 3, name: "Кросівки 3", price: 65},
+      {id: 4, name: "Кросівки 4", price: 70},
+      {id: 5, name: "Кросівки 5", price: 75}
+    ];
 
-<script>
-const products = [
-  {id: 1, name: "Кросівки 1", price: 55, photo: "https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/3/7/370FZ-99X-001-1-1099838.jpg"},
-  {id: 2, name: "Кросівки 2", price: 60, photo: "https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/2/5/253DD-70X-003-1-1031844.jpg"},
-  {id: 3, name: "Кросівки 3", price: 65, photo: "https://static.cropp.com/media/catalog/product/0/5/059DC-17X-001-1-1094027.jpg"},
-  {id: 4, name: "Кросівки 4", price: 70, photo: "https://static.cropp.com/media/catalog/product/3/8/387FZ-33X-001-1-1094035_1.jpg"},
-  {id: 5, name: "Кросівки 5", price: 75, photo: "https://static.cropp.com/media/catalog/product/2/4/242DD-99X-001-1-1028758_1.jpg"}
-];
+    const container = document.getElementById("products");
 
-const container = document.getElementById("products");
+    products.forEach(p => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        <h3>${p.name} - ${p.price} грн</h3>
+        <label>Розмір:
+          <select id="size-${p.id}">
+            <option value="43">43</option>
+            <option value="44">44</option>
+            <option value="45">45</option>
+          </select>
+        </label>
+        <button onclick="goToPayment(${p.id}, '${p.name}', ${p.price})">Замовити</button>
+      `;
+      container.appendChild(div);
+    });
 
-products.forEach(p => {
-  const div = document.createElement("div");
-  div.innerHTML = `
-    <h3>${p.name} — ${p.price} грн</h3>
-    <img src="${p.photo}" width="150"><br>
-    <label>Розмір:
-      <select id="size_${p.id}">
-        <option value="43">43</option>
-        <option value="44">44</option>
-        <option value="45">45</option>
-      </select>
-    </label><br>
-    <button onclick="order(${p.id}, '${p.name}', ${p.price})">Замовити</button>
-    <hr>
-  `;
-  container.appendChild(div);
-});
-
-function order(id, name, price) {
-  const size = document.getElementById(`size_${id}`).value;
-  const url = `payment.html?product_id=${id}&name=${encodeURIComponent(name)}&size=${size}&price=${price}`;
-  window.location.href = url;
-}
-</script>
+    function goToPayment(id, name, price) {
+      const size = document.getElementById(`size-${id}`).value;
+      const url = `payment.html?product_id=${id}&name=${encodeURIComponent(name)}&size=${size}&price=${price}`;
+      window.location.href = url;
+    }
+  </script>
 </body>
 </html>
