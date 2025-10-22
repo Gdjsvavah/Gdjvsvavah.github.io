@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Оплата замовлення</title>
+    <script src="https://static.liqpay.ua/libjs/checkout.js"></script>
+</head>
+<body>
+    <h1>Оплата замовлення</h1>
+    <p>Натисніть "Оплатити", щоб перейти до LiqPay Sandbox</p>
+    <button id="payBtn">Оплатити</button>
+
+    <script>
+        const order = JSON.parse(sessionStorage.getItem("order"));
+        if (!order) {
+            alert("Помилка: дані замовлення відсутні");
+            window.location.href = "index.html";
+        }
+
+        document.getElementById("payBtn").onclick = function() {
+            // Дані для LiqPay Sandbox
+            const public_key = "sandbox_i2555075372";
+
+            const data = {
+                "public_key": public_key,
+                "action": "pay",
+                "amount": "1",  // тестова сума
+                "currency": "USD",
+                "description": `Оплата взуття ID ${order.product_id}, розмір ${order.size}`,
+                "order_id": `${Date.now()}`,
+                "sandbox": "1",
+                "result_url": window.location.origin + "/thanks.html"
+            };
+
+            const stringData = btoa(JSON.stringify(data));
+            const signature = ""; // для sandbox можна залишити порожнім
+
+            LiqPayCheckout.init({
+                data: stringData,
+                signature: signature,
+                embedTo: "#payBtn",
+                mode: "popup"
+            }).on("liqpay.callback", function(result){
+                console.log(result);
+            }).on("liqpay.ready", function(){
+                console.log("LiqPay готовий");
+            }).on("liqpay.close", function(){
+                console.log("Вікно LiqPay закрите");
+            });
+        };
+    </script>
+</body>
+</html>
