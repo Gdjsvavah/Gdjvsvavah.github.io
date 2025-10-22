@@ -17,10 +17,9 @@
     const size = params.get("size");
     const product_name = params.get("name");
 
-    document.getElementById("order-info").innerText = 
+    document.getElementById("order-info").innerText =
       `Ваше замовлення: ${product_name}, розмір ${size}`;
 
-    // Відправка даних в Telegram бот через WebApp.sendData
     if (window.Telegram?.WebApp) {
       Telegram.WebApp.sendData(JSON.stringify({
         product_id: product_id,
