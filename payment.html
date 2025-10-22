@@ -1,107 +1,68 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<title>Оплата замовлення</title>
+  <meta charset="UTF-8">
+  <title>Оплата взуття</title>
 </head>
 <body>
-<h2>Оплата замовлення</h2>
+  <h2>Оплата взуття</h2>
+  <p id="product-info"></p>
+  <button id="pay-btn">Оплатити</button>
 
-<form id="liqpayForm">
-  <label>Номер картки:</label>
-  <input type="text" id="cardNumber" placeholder="4242424242424242" required><br><br>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // Дані з URL (передаються з index.html)
+    const params = new URLSearchParams(window.location.search);
+    const product_id = params.get("product_id");
+    const product_name = params.get("name");
+    const size = params.get("size");
+    const price = params.get("price");
 
-  <label>Термін дії (мм/рр):</label>
-  <input type="text" id="expiry" placeholder="12/30" required><br><br>
+    document.getElementById("product-info").innerText = 
+      `Ви замовили: ${product_name}, розмір ${size}, ціна: ${price} грн`;
 
-  <label>CVV:</label>
-  <input type="text" id="cvv" placeholder="123" required><br><br>
+    document.getElementById("pay-btn").onclick = function() {
+      const data = {
+        public_key: "sandbox_i2555075372",  // Тестовий public key
+        amount: price,
+        currency: "UAH",
+        description: `Оплата ${product_name}, розмір ${size}`,
+        order_id: `${product_id}_${size}_${Date.now()}`,
+        sandbox: 1,
+        result_url: `https://gdjsvavah.github.io/Gdjvsvavah.github.io/thanks.html?product_id=${product_id}&name=${encodeURIComponent(product_name)}&size=${size}&price=${price}`
+      };
 
-  <button type="button" onclick="pay()">Оплатити</button>
-</form>
+      const jsonData = JSON.stringify(data);
+      const data_b64 = btoa(jsonData);
+      const private_key = "sandbox_BePKgL2SgYydsrenfKgG0ImgHgYUBh6qzdY20lBt"; // Тестовий private key
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const product_id = params.get("product_id");
-const product_name = params.get("name");
-const size = params.get("size");
-const price = params.get("price");
+      // Підпис LiqPay
+      function sha1(msg) {
+        return CryptoJS.SHA1(msg).toString(CryptoJS.enc.Base64);
+      }
+      const signature = sha1(private_key + data_b64 + private_key);
 
-function pay() {
-  // sandbox LiqPay
-  const data = {
-    public_key: "sandbox_i2555075372",
-    amount: price,
-    currency: "UAH",
-    description: `Оплата ${product_name}, розмір ${size}`,
-    order_id: `${product_id}_${size}_${Date.now()}`,
-    sandbox: 1,
-    result_url: `thanks.html?product_id=${product_id}&name=${encodeURIComponent(product_name)}&size=${size}&price=${price}`
-  };
+      // Створюємо форму
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "https://www.liqpay.ua/api/3/checkout";
+      form.target = "_blank";
 
-  const jsonData = JSON.stringify(data);
-  const data_b64 = btoa(jsonData);
+      const inputData = document.createElement("input");
+      inputData.type = "hidden";
+      inputData.name = "data";
+      inputData.value = data_b64;
 
-  // Підпис для sandbox (можна робити на клієнті)
-  const private_key = "sandbox_BePKgL2SgYydsrenfKgG0ImgHgYUBh6qzdY20lBt";
-  const signature = btoa(sha1(private_key + data_b64 + private_key));
+      const inputSig = document.createElement("input");
+      inputSig.type = "hidden";
+      inputSig.name = "signature";
+      inputSig.value = signature;
 
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "https://www.liqpay.ua/api/3/checkout";
-  form.target = "_blank";
-
-  const inputData = document.createElement("input");
-  inputData.type = "hidden";
-  inputData.name = "data";
-  inputData.value = data_b64;
-
-  const inputSig = document.createElement("input");
-  inputSig.type = "hidden";
-  inputSig.name = "signature";
-  inputSig.value = signature;
-
-  form.appendChild(inputData);
-  form.appendChild(inputSig);
-
-  document.body.appendChild(form);
-  form.submit();
-}
-
-// SHA1 реалізація можна вставити звідси:
-// https://geraintluff.github.io/sha1/
-function sha1(msg) {
-  // готовий JS код SHA1
-  function rotl(n,s){return n<<s|n>>>32-s}
-  function tohex(i){for(var h="",j=28;j>=0;j-=4)h+=(i>>j&0xf).toString(16);return h}
-  var H0=0x67452301,H1=0xEFCDAB89,H2=0x98BADCFE,H3=0x10325476,H4=0xC3D2E1F0;
-  msg=unescape(encodeURIComponent(msg));
-  var ml=msg.length*8;
-  msg+=String.fromCharCode(0x80);
-  while(msg.length%64!=56) msg+=String.fromCharCode(0);
-  var words=[];
-  for(var i=0;i<msg.length;i+=4){
-    words.push(msg.charCodeAt(i)<<24 | msg.charCodeAt(i+1)<<16 | msg.charCodeAt(i+2)<<8 | msg.charCodeAt(i+3));
-  }
-  words.push(ml>>>32);
-  words.push(ml&0xFFFFFFFF);
-  for(var i=0;i<words.length;i+=16){
-    var w=words.slice(i,i+16);
-    for(var j=16;j<80;j++) w[j]=rotl(w[j-3]^w[j-8]^w[j-14]^w[j-16],1);
-    var a=H0,b=H1,c=H2,d=H3,e=H4;
-    for(var j=0;j<80;j++){
-      var f,k;
-      if(j<20){f=(b&c)|((~b)&d);k=0x5A827999}
-      else if(j<40){f=b^c^d;k=0x6ED9EBA1}
-      else if(j<60){f=(b&c)|(b&d)|(c&d);k=0x8F1BBCDC}
-      else{f=b^c^d;k=0xCA62C1D6}
-      var temp=(rotl(a,5)+f+e+k+w[j])>>>0;
-      e=d;d=c;c=rotl(b,30)>>>0;b=a;a=temp;
-    }
-    H0=(H0+a)>>>0;H1=(H1+b)>>>0;H2=(H2+c)>>>0;H3=(H3+d)>>>0;H4=(H4+e)>>>0;
-  }
-  return tohex(H0)+tohex(H1)+tohex(H2)+tohex(H3)+tohex(H4);
-}
-</script>
+      form.appendChild(inputData);
+      form.appendChild(inputSig);
+      document.body.appendChild(form);
+      form.submit();
+    };
+  </script>
 </body>
 </html>
