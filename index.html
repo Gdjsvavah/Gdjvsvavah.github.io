@@ -1,89 +1,81 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Каталог взуття</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://static.liqpay.ua/libjs/checkout.js"></script>
-<style>
-body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
-.product { border: 1px solid #ccc; border-radius: 8px; padding: 10px; margin: 10px; display: inline-block; width: 180px; text-align: center; background: white; }
-img { width: 150px; height: 150px; object-fit: cover; }
-select, button { margin-top: 5px; width: 100%; padding: 5px; }
-</style>
+    <meta charset="UTF-8">
+    <title>Каталог взуття</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { text-align: center; }
+        .product { border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
+        .product img { width: 120px; margin-right: 15px; }
+        .product-details { display: flex; flex-direction: column; justify-content: space-between; }
+        button { padding: 8px 12px; margin-top: 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
-<h2>Каталог взуття</h2>
-<div id="products"></div>
+    <h1>Каталог взуття</h1>
 
-<script>
-const tg = window.Telegram.WebApp;
-tg.expand();
+    <div class="product">
+        <img src="https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/3/7/370FZ-99X-001-1-1099838.jpg" alt="Кросівки 1">
+        <div class="product-details">
+            <h3>Кросівки 1</h3>
+            <p>Ціна: 55 USD</p>
+            <p>Розміри: 43, 44, 45</p>
+            <button onclick="order(1)">Замовити</button>
+        </div>
+    </div>
 
-// Тестові товари
-const products = [
-  {id:1, name:"Кросівки 1", price:55, sizes:[43,44,45], photo:"https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/3/7/370FZ-99X-001-1-1099838.jpg"},
-  {id:2, name:"Кросівки 2", price:60, sizes:[43,44,45], photo:"https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/2/5/253DD-70X-003-1-1031844.jpg"},
-  {id:3, name:"Кросівки 3", price:65, sizes:[43,44,45], photo:"https://static.cropp.com/media/catalog/product/0/5/059DC-17X-001-1-1094027.jpg"},
-  {id:4, name:"Кросівки 4", price:70, sizes:[43,44,45], photo:"https://static.cropp.com/media/catalog/product/3/8/387FZ-33X-001-1-1094035_1.jpg"},
-  {id:5, name:"Кросівки 5", price:75, sizes:[43,44,45], photo:"https://static.cropp.com/media/catalog/product/2/4/242DD-99X-001-1-1028758_1.jpg"}
-];
+    <div class="product">
+        <img src="https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/2/5/253DD-70X-003-1-1031844.jpg" alt="Кросівки 2">
+        <div class="product-details">
+            <h3>Кросівки 2</h3>
+            <p>Ціна: 60 USD</p>
+            <p>Розміри: 43, 44, 45</p>
+            <button onclick="order(2)">Замовити</button>
+        </div>
+    </div>
 
-const container = document.getElementById("products");
+    <div class="product">
+        <img src="https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/0/5/059DC-17X-001-1-1094027.jpg" alt="Кросівки 3">
+        <div class="product-details">
+            <h3>Кросівки 3</h3>
+            <p>Ціна: 65 USD</p>
+            <p>Розміри: 43, 44, 45</p>
+            <button onclick="order(3)">Замовити</button>
+        </div>
+    </div>
 
-products.forEach(prod => {
-  const div = document.createElement("div");
-  div.className = "product";
-  div.innerHTML = `
-    <img src="${prod.photo}" alt="${prod.name}">
-    <div><b>${prod.name}</b></div>
-    <div>Ціна: ${prod.price}$</div>
-    <select id="size-${prod.id}">${prod.sizes.map(s=>`<option value="${s}">${s}</option>`)}</select>
-    <button onclick="order(${prod.id}, ${prod.price})">Замовити та оплатити</button>
-  `;
-  container.appendChild(div);
-});
+    <div class="product">
+        <img src="https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/3/8/387FZ-33X-001-1-1094035_1.jpg" alt="Кросівки 4">
+        <div class="product-details">
+            <h3>Кросівки 4</h3>
+            <p>Ціна: 70 USD</p>
+            <p>Розміри: 43, 44, 45</p>
+            <button onclick="order(4)">Замовити</button>
+        </div>
+    </div>
 
-// LiqPay sandbox keys
-const PUBLIC_KEY = "sandbox_i2555075372";
+    <div class="product">
+        <img src="https://static.cropp.com/media/catalog/product/cache/1200/a4e40ebdc3e371adff845072e1c73f37/2/4/242DD-99X-001-1-1028758_1.jpg" alt="Кросівки 5">
+        <div class="product-details">
+            <h3>Кросівки 5</h3>
+            <p>Ціна: 75 USD</p>
+            <p>Розміри: 43, 44, 45</p>
+            <button onclick="order(5)">Замовити</button>
+        </div>
+    </div>
 
-function order(productId, price) {
-  const size = document.getElementById(`size-${productId}`).value;
+    <script>
+        function order(productId) {
+            const size = prompt("Введіть розмір (43-45):");
+            if (!size) return;
 
-  // Параметри LiqPay
-  const data = {
-    public_key: PUBLIC_KEY,
-    action: "pay",
-    amount: price,
-    currency: "USD",
-    description: "Оплата взуття",
-    order_id: `${productId}-${Date.now()}`,
-    sandbox: 1
-  };
+            // Зберігаємо дані для payment.html через sessionStorage
+            sessionStorage.setItem("order", JSON.stringify({ product_id: productId, size: size }));
 
-  const jsonData = btoa(JSON.stringify(data));
-  const signature = "TEST_SIGNATURE"; // Тестова для sandbox, у реальному використанні генеруємо серверно
-
-  LiqPayCheckout.init({
-    data: jsonData,
-    signature: signature,
-    embedTo: "#products",
-    mode: "popup"
-  }).on("liqpay.callback", function(result){
-      if(result.status === "success") {
-          // Надсилаємо боту дані про успішну оплату
-          tg.sendData(JSON.stringify({
-            product_id: productId,
-            size: parseInt(size),
-            paid: true
-          }));
-          alert("Оплата пройшла успішно ✅");
-      } else {
-          alert("Оплата не пройшла ❌");
-      }
-  }).on("liqpay.ready", function(){ }).on("liqpay.close", function(){ });
-}
-</script>
+            // Переходимо на оплату
+            window.location.href = "payment.html";
+        }
+    </script>
 </body>
 </html>
