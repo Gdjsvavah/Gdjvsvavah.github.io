@@ -1,38 +1,33 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
-<title>Дякуємо за замовлення</title>
+  <meta charset="UTF-8">
+  <title>Дякуємо за оплату</title>
 </head>
 <body>
-<h2>Дякуємо за оплату ✅</h2>
+  <h2>Дякуємо за оплату ✅</h2>
+  <p id="order-info"></p>
 
-<button onclick="continueShopping()">Продовжити покупки</button>
-<button onclick="exitApp()">Вийти</button>
+  <button onclick="window.location.href='index.html'">Продовжити покупки</button>
+  <button onclick="window.close()">Вийти</button>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const product_id = params.get("product_id");
-const size = params.get("size");
-const name = params.get("name");
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const product_id = params.get("product_id");
+    const size = params.get("size");
+    const product_name = params.get("name");
 
-function continueShopping() {
-  window.location.href = "index.html";
-}
+    document.getElementById("order-info").innerText = 
+      `Ваше замовлення: ${product_name}, розмір ${size}`;
 
-function exitApp() {
-  alert("Дякуємо! До зустрічі.");
-  window.close();
-}
-
-// Надсилаємо дані в локального бота через WebApp
-if (window.Telegram?.WebApp) {
-  Telegram.WebApp.sendData(JSON.stringify({
-    product_id: product_id,
-    size: size,
-    paid: true
-  }));
-}
-</script>
+    // Відправка даних в Telegram бот через WebApp.sendData
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.sendData(JSON.stringify({
+        product_id: product_id,
+        size: size,
+        paid: true
+      }));
+    }
+  </script>
 </body>
 </html>
