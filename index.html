@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>My WebApp</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { background: #111; color: white; font-family: sans-serif; text-align: center; }
+    button { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Привіт із Telegram WebApp!</h1>
+  <button id="btn">Надіслати дані боту</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // розгортає на весь екран
+
+    document.getElementById("btn").addEventListener("click", () => {
+      tg.sendData("Hello from WebApp!"); // надсилає дані боту
+    });
+  </script>
+</body>
+</html>
